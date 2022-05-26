@@ -1,5 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import = "com.na.user.member.model.vo.Member" %>    
+<% 
+   // context root 값 알아오기
+   String contextPath = request.getContextPath();
+   // 로그인한 사용자의 정보 뽑기 (세션으로 부터)
+   Member loginUser = (Member)session.getAttribute("loginUser");
+   // 세션으로 부터 알람메세지 뽑아내기 
+   String alertMsg = (String)session.getAttribute("alertMsg");
+%>    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +24,7 @@
     <style>
       div{
           box-sizing: border-box;
-           /*border: 1px solid red;*/
+          /* border: 1px solid red; */
           /*가이드라인 */
       }
 
@@ -46,6 +55,8 @@
       }
        
        #icon1{height: 20%;}
+       #icon2{height: 20%;}
+       #icon3{height: 0%;}
 
       /*1.로고 스타일*/
       #header_2{
@@ -112,39 +123,72 @@
        /* 서브메뉴 글씨 조절 */
        #navi>li>ul a { font-size: 10px; }
        #navi>li>ul a:hover{ font-size: 13px;} 
-	    #icon1 {
-           width: 50px;
-           height: 50px;
-           display: block;
-           cursor: pointer;
-           margin-left : 80px;
+
+       /*오른쪽에 장바구니, 로그인 아이콘*/
+       #icon1, #icon2{
+           width: 19%;
+           height: 14%;
+           display: inline-block;
+           float: right;
+           margin-top: 20px;
+           margin-right: 15px;
        }
-       #icon1 ul{
-            font-family: 'Noto Sans KR', sans-serif;
-            list-style-type: none;
-            background-color: rgba(24,189,234, 0.5);
-            width: 70px;
-            padding: 0px;
-            height: 25px;
-            text-align: center;
-            line-height: 25px;
-            font-weight: 5px;
-            color: gray;
-            border-radius: 10px;
-            font-size: 12px;
-            display: none;
+       #cart_icon>img, #login_icon>img{
+           width: 100%;
+           height: 100%;
+           float: right;
        }
 
-       #icon1>#i1:hover+ul{
-           display: block;
-       }
-       #icon1>ul:hover{
-           display: block;
-       }
-       #i2{
-          color: white;
+        /* footer상세 영역 */
+     #footer>table{
+        margin: auto;
+        margin-top: 5px;
+     }
+      #ft1 {
+          float: left;
+          margin-right: 320px;
+      }
+      #ft1>a{
+        padding: 0px;
+        margin: 0px;
+      }
+      #ft2 {
+        float: right; 
+      }
+      #ft3 {
+        font-family: 'Noto Sans KR', sans-serif;
+          float: left;
+          font-size: 10px;
+      }
+      #ft4 {
+         font-family: 'Noto Sans KR', sans-serif;
+          font-size: 10px;
+          text-align: right;
+          float: right; 
+          margin-left: auto;
+      }
+      #ft1>a, #ft2>a {
+        font-family: 'Noto Sans KR', sans-serif;
           text-decoration: none;
-       }
+          color: black;
+          font-size: 110%;
+          font-weight: 600;
+          margin: 15px;     
+          vertical-align: middle; 
+      }
+
+      #ft5{
+        font-size: 10px;
+        font-family: 'Noto Sans KR', sans-serif;
+        color: rgba(73, 71, 71, 0.5);
+      }
+
+      #ft5{
+        text-align: right;
+      }
+
+
+
 
     </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -159,7 +203,15 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-
+<script>
+      // script태그 내에서 스크립틀릿과 같은 jsp 요소들을 사용할 수 있다. 
+		var msg = "<%=alertMsg%>"; // "성공적으로 로그인이 되었습니다." / "null"
+		if(msg != "null") {
+			alert(msg);
+			// 알림창 띄우며 해당 세션의 해당 키-밸류를 지워줘야 연속해서 안뜬다.
+			<% session.removeAttribute("alertMsg"); %>
+		}
+</script>
        <div id="header">
            <div id="header_1"></div>
            <div id="header_2">
@@ -168,23 +220,42 @@
             </a>
            </div>
            <div id="header_3">
-                <div id="icon1">
-                    <a href="" id="i1"><img src="/na/resources/image/관리자.png" style="width: 100%; height: 100%; margin-top : 20px; margin-left : 10px;"></a>
-                    <ul style="margin-right : 1000px;"><a href="" id="i2">로그아웃</a></ul>
-                </div>
+               <div id="icon1">
+                    <a id="cart_icon" href="" target="">
+                      <img src="/na/resources/image/장바구니.png">
+                     </a>
+                   </div>        
+                <div id="icon2">
+                <!-- 두가지 화면이 선택적으로 보여지게끔(로그인하고, 로그인안하고) -->
+                   <% if (loginUser == null) { %> <!-- 로그인 전에 -->
+                    <a id="login_icon" href="<%= contextPath %>/beforeLog.me" >
+                        <img src="/na/resources/image/로그인.png">
+                    </a>
+                    <!--회원가입 페이지 이동  -->
+                    
+                    
+                  <% } %> <!-- 로그인 성공후  else=>마이페이지, 로그아웃 -->
+                  
+                  
+               </div>
+               <div id="icon3"></div>
            </div>
        </div>
        <div id="navigator">
         <ul id="navi">
-            <li><a href="">제품관리</a></li>
-            <li><a href="">게시글관리</a></li>
+            <li><a href="">제품보기</a></li>
+            <li><a href="">건강매거진</a></li>
             <li>
-                <a href="">후기관리</a>
+                <a href="">고객후기</a>
             </li>
             <li>
-                <a href="">회원관리</a>
+                <a href="">고객센터</a>
             </li>
         </ul>
        </div> 
+
+    
+    
+
 </body>
 </html>

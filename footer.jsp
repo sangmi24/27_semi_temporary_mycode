@@ -130,7 +130,7 @@
            float: right;
        }
 
-    /* footer상세 영역 */
+        /* footer상세 영역 */
      #footer>table{
      width:100%;
         margin: auto;
@@ -195,6 +195,43 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+
+       <!-- <div id="header">
+           <div id="header_1"></div>
+           <div id="header_2">
+            <a href="" target="_self">
+                <img src="resources/image/상호이미지.png" id="logo">
+            </a>
+           </div>
+           <div id="header_3">
+               <div id="icon1">
+                    <a id="cart_icon" href="" target="">
+                      <img src="resources/image/장바구니.png">
+                     </a>
+                   </div>        
+                <div id="icon2">
+                    <a id="login_icon" href="" >
+                        <img src="resources/image/로그인.png">
+                    </a>
+               </div>
+               <div id="icon3"></div>
+           </div>
+       </div>
+       <div id="navigator">
+        <ul id="navi">
+            <li><a href="">제품보기</a></li>
+            <li><a href="">건강매거진</a></li>
+            <li>
+                <a href="">고객후기</a>
+            </li>
+            <li>
+                <a href="">고객센터</a>
+            </li>
+        </ul>
+       </div>  -->
+
+    
+    
     <div id="footer">
         <table>
             <tr>
