@@ -1,6 +1,5 @@
-package com.na.admin.review.model.dao;
-
-import static com.na.template.JDBCTemplate.close;
+package com.na.user.review.model.dao;
+import static com.na.template.JDBCTemplate.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import com.na.template.model.vo.PageInfo;
-
+import com.na.user.info.model.vo.Notice;
 import com.na.user.review.model.vo.Review;
 
 
 public class ReviewDao {
-	
+
 private Properties prop = new Properties();
 	
 	public ReviewDao() { //기본 생성자
@@ -26,19 +25,18 @@ private Properties prop = new Properties();
 			prop.loadFromXML(new FileInputStream(ReviewDao.class.getResource("/sql/review/review-mapper.xml").getPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
-	// notice 현재 게시글 갯수	
-	public int selectListCount(Connection conn) {
-			
-			// SELECT 문 => ResultSet 객체 ( 한개의 행)
-			
+  // 리뷰 현재 게시글 갯수	
+		public int selectListCount(Connection conn) {
+	// SELECT 문 => ResultSet 객체 ( 한개의 행)
+	
 			int listCount = 0;
 			
 			PreparedStatement pstmt = null;
 			ResultSet rset = null;
 			
-			String sql = prop.getProperty("selectListCountad");
+			String sql = prop.getProperty("selectListCount");
 			
 			
 			try {
@@ -59,103 +57,183 @@ private Properties prop = new Properties();
 				close(pstmt);
 			}
 			
-			return listCount;	
-		}
-	  
-	//notice 현재 사용자가 요청한 페이지에 보여질 게시글 리스트 
-	public ArrayList<Review> selectList(Connection conn,PageInfo pi){
-		
-		// SELECT문 => ResultSet 객체 (여러 행 조회) => ArrayList
-		
-		ArrayList<Review> list = new ArrayList<>();
-		
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		
-		String sql = prop.getProperty("selectreviewListad");
-		
-		try {
-			pstmt = conn.prepareStatement(sql);
+			return listCount;				
+	}		
+		//현재 사용자가 요청한 페이지에 보여질 게시글 리스트 	
+		public ArrayList<Review> selectList(Connection conn,PageInfo pi){
 			
+			// SELECT문 => ResultSet 객체 (여러 행 조회) => ArrayList
 			
-			int startRow = (pi.getCurrentPage()-1)*pi.getBoardLimit()+1;
-			int endRow = startRow +pi.getBoardLimit() -1 ;
+			ArrayList<Review> list = new ArrayList<>();
 			
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
+			PreparedStatement pstmt = null;
+			ResultSet rset = null;
 			
-			rset = pstmt.executeQuery();
-	        
-			while(rset.next()) {
-				 
-				list.add(new Review(rset.getInt("REVIEW_NO")
-				          ,rset.getString("REVIEW_TITLE")
-				          ,rset.getString("MEM_ID")
-				          ,rset.getString("D1")
-				          ,rset.getInt("REVIEW_COUNT")));		
-			}
+			String sql = prop.getProperty("selectreviewList");
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-		   
-			close(rset);
-			close(pstmt);
-			
-		}
-		 return list;	
-	}
-	//review 상세보기용 
-			public Review selectReview(Connection conn,int revNo) {
+			try {
+				pstmt = conn.prepareStatement(sql);
 				
-				// SELECT문=> ResultSet객체 (한행 조회)
+				int startRow = (pi.getCurrentPage()-1)*pi.getBoardLimit()+1;
+				int endRow = startRow +pi.getBoardLimit() -1 ;
 				
-				Review r = null;
+				pstmt.setInt(1, startRow);
+				pstmt.setInt(2, endRow);
 				
-				PreparedStatement pstmt = null;
-				ResultSet rset = null;
-				
-				String sql = prop.getProperty("selectReviewad");
-				
-				try {
-					pstmt = conn.prepareStatement(sql);
-					
-					pstmt.setInt(1, revNo);
-					
-					rset = pstmt.executeQuery();
-					
-				    if(rset.next()) {
-				    	
-				    	r = new Review();
-				
-				    	r.setRevNo(rset.getInt("REVIEW_NO"));
-				    	r.setRevTitle(rset.getString("REVIEW_TITLE"));
-				    	r.setUserId(rset.getString("MEM_ID"));
-				    	r.setRevDate(rset.getString("D1"));
-				    	r.setRevDes(rset.getString("REVIEW_DESCRIPTION"));
-				    
-				    		    	
-				    }
-					
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}finally {
-					close(rset);
-					close(pstmt);
+				rset = pstmt.executeQuery();
+		        
+				while(rset.next()) {
+					 
+					list.add(new Review(rset.getInt("REVIEW_NO")
+							          ,rset.getString("REVIEW_TITLE")
+							          ,rset.getString("MEM_ID")
+							          ,rset.getString("D1")
+							          ,rset.getInt("REVIEW_COUNT")));					
 				}
 				
-				return r;	
-			}  		
-	// review 삭제
-	public int deleteReview(Connection conn, int revNo) {
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+			   
+				close(rset);
+				close(pstmt);
+				
+			}
+			 return list;	
+		}
 		
-		 // UPDATE 문 => int (처리된 행의 갯수)
+		public ArrayList<Review> selectList2(Connection conn,PageInfo pi){
+			
+			// SELECT문 => ResultSet 객체 (여러 행 조회) => ArrayList
+			
+			ArrayList<Review> list = new ArrayList<>();
+			
+			PreparedStatement pstmt = null;
+			ResultSet rset = null;
+			
+			String sql = prop.getProperty("selectreviewList2");
+			
+			try {
+				pstmt = conn.prepareStatement(sql);
+				
+				int startRow = (pi.getCurrentPage()-1)*pi.getBoardLimit()+1;
+				int endRow = startRow +pi.getBoardLimit() -1 ;
+				
+				pstmt.setInt(1, startRow);
+				pstmt.setInt(2, endRow);
+				
+				rset = pstmt.executeQuery();
+		        
+				while(rset.next()) {
+					 
+					list.add(new Review(rset.getInt("REVIEW_NO")
+							          ,rset.getString("REVIEW_TITLE")
+							          ,rset.getString("MEM_ID")
+							          ,rset.getString("D1")
+							          ,rset.getInt("REVIEW_COUNT")));					
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+			   
+				close(rset);
+				close(pstmt);
+				
+			}
+			 return list;	
+		}
+		
+		//review 상세보기용 
+		public Review selectReview(Connection conn,int revNo) {
+			
+			// SELECT문=> ResultSet객체 (한행 조회)
+			
+			Review r = null;
+			
+			PreparedStatement pstmt = null;
+			ResultSet rset = null;
+			
+			String sql = prop.getProperty("selectReview");
+			
+			try {
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setInt(1, revNo);
+				
+				rset = pstmt.executeQuery();
+				
+			    if(rset.next()) {
+			    	
+			    	r = new Review();
+			
+			    	r.setRevNo(rset.getInt("REVIEW_NO"));
+			    	r.setRevTitle(rset.getString("REVIEW_TITLE"));
+			    	r.setUserId(rset.getString("MEM_ID"));
+			    	r.setRevDate(rset.getString("D1"));
+			    
+			    	r.setRevDes(rset.getString("REVIEW_DESCRIPTION"));
+			    	r.setRevPath(rset.getString("REVIEW_PHOTO_PATH"));
+			    		    	
+			    }
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+				close(rset);
+				close(pstmt);
+			}
+			
+			return r;	
+		}  		
+		
+		public ArrayList<Review> selectReThumbnailList(Connection conn) {
+			// SELECT 문 => ResultSet (여러행) => ArrayList
+			
+			ArrayList<Review> list = new ArrayList<>();
+			
+			PreparedStatement pstmt = null;
+			ResultSet rset = null;
+			
+			String sql = prop.getProperty("selectThumbnailList");
+			
+			try {
+				pstmt = conn.prepareStatement(sql);
+				
+				
+				rset = pstmt.executeQuery();
+				
+				
+				while(rset.next()) {
+					
+					Review r = new Review();
+					r.setRevNo(rset.getInt("REVIEW_NO"));
+					r.setRevPath(rset.getString("REVIEW_PHOTO_PATH"));
+					r.setRevTitle(rset.getString("REVIEW_TITLE"));
+					r.setCount(rset.getInt("REVIEW_COUNT"));
+					
+					
+					list.add(r);
+				}
+				
+			} catch (SQLException e) {
+			
+				e.printStackTrace();
+			}finally {
+				close(rset);
+				close(pstmt);
+			}
+			return list;		
+		}
+		public int increaseCount(Connection conn, int revNo) {
+			
+			// UPDATE 문 => int (처리된 행의 갯수)
 			
 			int result = 0;
 			
 			PreparedStatement pstmt = null;
 			
-			String sql = prop.getProperty("deleteReview");
+			String sql = prop.getProperty("increaseCount");
 			
 			try {
 				pstmt = conn.prepareStatement(sql);
@@ -168,17 +246,22 @@ private Properties prop = new Properties();
 				e.printStackTrace();
 			}finally {
 				close(pstmt);
-			}
-			 return result;		
-		}	
+			}	
+			return result;		
+		}
+		
+		
+		
+		
+		
+		
+		
+	}
 	
-			
-			
-			
+	
 	
 	
 	
 	
 	
 
-}
