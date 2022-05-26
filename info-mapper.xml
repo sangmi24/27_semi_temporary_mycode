@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<!--notice 현재 게시글 갯수  --> 
+  <entry key="selectListCount">
+  SELECT COUNT(*) COUNT
+  FROM NOTICE
+  WHERE NOTI_STATUS = 'Y'
+   </entry>
+
+
+<!--notice 현재 사용자가 요청한 페이지에 보여질 게시글 리스트   -->
+   <entry key="selectList">
+   SELECT *
+   FROM(SELECT ROWNUM RNUM, A.*
+          FROM (SELECT NOTI_NO, NOTI_TITLE, TO_CHAR(NOTI_DATE,'YYYY-MM-DD') "D1"
+                FROM NOTICE N         
+                WHERE N.NOTI_STATUS = 'Y'            
+                ORDER BY NOTI_DATE DESC) A )
+    WHERE RNUM BETWEEN ? AND ?     
+   </entry>
+  
+  <!--검색  -->
+  <entry key="selectSearchListCount">
+  SELECT COUNT(*) COUNT
+  FROM NOTICE
+  WHERE NOTICE_TITLE LIKE ?
+  WHERE NOTI_STATUS = 'Y'  
+  </entry>
+  
+  <entry key="searchList">
+   SELECT *
+   FROM(SELECT ROWNUM RNUM, A.*
+          FROM (SELECT NOTI_NO, NOTI_TITLE, TO_CHAR(NOTI_DATE,'YYYY-MM-DD') "D1"
+                FROM NOTICE N         
+                WHERE N.NOTI_STATUS = 'Y'            
+                ORDER BY NOTI_DATE DESC) A )
+    WHERE RNUM BETWEEN ? AND ?    
+    AND NOTICE_TITLE LIKE ?
+     
+   </entry>
+  
+<!--notice 리스트에서 상세페이지로 이동! -->
+   <entry key="selectNotice">
+	SELECT NOTI_NO, NOTI_TITLE, NOTI_DESCRIPTION, NOTI_DATE, NOTI_STATUS
+	FROM NOTICE N
+	WHERE NOTI_NO = ?
+	    AND N.NOTI_STATUS = 'Y'	                
+	</entry>
+	
+	<entry key="insertNotice">
+	INSERT INTO NOTICE(NOTI_NO
+                      , NOTI_TITLE
+                      , NOTI_DATE
+                      , NOTI_DESCRIPTION
+                      , NOTI_STATUS)
+    VALUES(SEQ_NOTICE.NEXTVAL
+         , ?
+         , SYSDATE
+         , ?
+         , 'Y')                 
+	</entry>
+	
+	<entry key="deleteNotice">
+	UPDATE NOTICE
+	     SET NOTI_STATUS = 'N'
+	   WHERE NOTI_NO = ? 	
+	</entry>
+
+<!--faq 현재 사용자가 요청한 페이지에 보여질 게시글 리스트   -->
+   <entry key="selectfaqList">
+    SELECT FAQ_NO, FAQ_TITLE
+    FROM FAQ F         
+    WHERE F.FAQ_STATUS = 'Y'            
+    ORDER BY FAQ_NO ASC
+   </entry>	
+
+  <entry key="selectFaq">
+  SELECT FAQ_NO, FAQ_TITLE, FAQ_DESCRIPTION, FAQ_STATUS
+	FROM FAQ F
+	WHERE FAQ_NO = ?
+	AND F.FAQ_STATUS = 'Y'	     
+  </entry>
+	
+	<entry key="deleteFaq">
+	UPDATE FAQ
+	     SET FAQ_STATUS = 'N'
+	   WHERE FAQ_NO = ? 	
+	
+	</entry>
+	
+	<entry key="insertFaq">
+	INSERT INTO FAQ(FAQ_NO
+                      , FAQ_TITLE
+                      , FAQ_DESCRIPTION
+                      , FAQ_STATUS)
+    VALUES(SEQ_FAQ.NEXTVAL
+         , ?
+         , ?
+         , 'Y')                 
+	</entry>
+	
+	
+	
+	
+</properties>
